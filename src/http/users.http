@@ -3,7 +3,7 @@
 
 ###
 # Find All Users
-GET {{ baseURL }}/users?limit=2
+GET {{ baseURL }}/users
 
 ###
 # Find User By Id
@@ -15,8 +15,8 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "ah22mad@email.com",
-	"password": "Password123!"
+    "email": "ahmad@email.com",
+	"password": "password"
 }
 
 ###

@@ -4,15 +4,15 @@ import { UserRoute } from '@/modules/user/infra/http/UserRoute';
 import { UserEntity } from '@entities/users.entity';
 import bcrypt from 'bcrypt';
 import request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 // beforeAll(async () => {
 //   await createConnection(dbConnection);
 // });
 
-afterAll(async () => {
-  await getConnection().close();
-});
+// afterAll(async () => {
+//   await getConnection().close();
+// });
 
 describe('Testing Users', () => {
   describe('[POST] /users', () => {

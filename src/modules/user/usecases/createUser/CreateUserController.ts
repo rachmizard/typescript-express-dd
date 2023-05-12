@@ -1,15 +1,16 @@
 import { BaseController } from '@/core/infra/BaseController';
 import { CreateUserUsecase } from './CreateUserUsecase';
+import { CreateUserDto } from './CreateUserDTO';
 
 export class CreateUserController extends BaseController {
-  constructor(public readonly usecase: CreateUserUsecase) {
+  constructor(private readonly usecase: CreateUserUsecase) {
     super();
   }
 
   protected async executeImpl() {
     try {
       const req = this.req;
-      const body = req.body;
+      const body: CreateUserDto = req.body;
       const createUserData = await this.usecase.execute(body);
 
       return this.ok(this.res, createUserData);

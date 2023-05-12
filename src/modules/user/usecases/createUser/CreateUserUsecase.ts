@@ -2,6 +2,9 @@ import { Usecase } from '@/core/domain/Usecase';
 import { GenericAppError } from '@/core/logic/AppError';
 import { Result, left, right } from '@/core/logic/Result';
 
+import { User } from '../../domain/User';
+import { UserEmail } from '../../domain/UserEmail';
+import { UserPassword } from '../../domain/UserPassword';
 import { CreateUserDto } from '../../dto/UserDTO';
 import { UserRepository } from '../../repositories/UserRepository';
 import { CreateUserErrors } from './CreateUserErrors';
@@ -10,15 +13,36 @@ import { CreateUserResponse } from './CreateUserResponse';
 export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserResponse> {
   constructor(private readonly repository: UserRepository) {}
 
-  async execute(data: CreateUserDto): Promise<CreateUserResponse> {
+  async execute(payload: CreateUserDto): Promise<CreateUserResponse> {
     try {
-      const isExists = await this.repository.findUserByEmail(data.email);
+      const isExists = await this.repository.findUserByEmail(payload.email);
 
       if (isExists) {
-        return left(new CreateUserErrors.EmailAlreadyExistsError(data.email));
+        return left(new CreateUserErrors.EmailAlreadyExistsError(payload.email));
       }
 
-      await this.repository.createUser(data);
+      const emailOrError = UserEmail.create(payload.email);
+      const passwordOrError = UserPassword.create({
+        value: payload.password,
+      });
+
+      const dtoResult = Result.combine([emailOrError, passwordOrError]);
+
+      if (dtoResult.isFailure) {
+        return left(Result.fail<void>(dtoResult.errorValue())) as CreateUserResponse;
+      }
+
+      const userOrError = User.create({
+        email: emailOrError.getValue(),
+        password: passwordOrError.getValue(),
+      });
+
+      if (userOrError.isFailure) {
+        return left(Result.fail<void>(userOrError.errorValue())) as CreateUserResponse;
+      }
+
+      const user = userOrError.getValue();
+      await this.repository.createUser(user);
 
       return right(Result.ok<void>());
     } catch (error) {

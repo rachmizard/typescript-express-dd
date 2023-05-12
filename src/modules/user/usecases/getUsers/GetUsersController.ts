@@ -1,6 +1,6 @@
-import { QueryParams } from '@/interfaces/request.interface';
 import { BaseController } from '@/core/infra/BaseController';
 import { GetUsersUsecase } from './GetUsersUsecase';
+import { GetUsersResponseDTO } from './GetUsersResponseDTO';
 
 export class GetUsersController extends BaseController {
   constructor(private readonly usecase: GetUsersUsecase) {
@@ -9,12 +9,20 @@ export class GetUsersController extends BaseController {
 
   protected async executeImpl() {
     try {
-      const req = this.req;
-      const queryParams = req.query as unknown as QueryParams;
+      const result = await this.usecase.execute();
 
-      const result = await this.usecase.execute(queryParams);
+      if (result.isLeft()) {
+        const error = result.value;
 
-      return this.ok(this.res, result);
+        switch (error.constructor) {
+          default:
+            return this.fail(error.errorValue().message);
+        }
+      }
+
+      return this.ok<GetUsersResponseDTO>(this.res, {
+        data: result.value.getValue(),
+      });
     } catch (error) {
       return this.fail(error.toString());
     }
