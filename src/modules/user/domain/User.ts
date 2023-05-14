@@ -9,6 +9,8 @@ import { UserPassword } from './UserPassword';
 interface UserProps {
   email: UserEmail;
   password?: UserPassword;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class User extends AggregateRoot<UserProps> {
@@ -26,6 +28,14 @@ export class User extends AggregateRoot<UserProps> {
 
   get password() {
     return this.props.password;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   public static create(props: UserProps, id?: UniqueEntityID): Result<User> {

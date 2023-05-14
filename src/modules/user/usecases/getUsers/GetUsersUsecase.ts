@@ -4,19 +4,18 @@ import { Either, Result, left, right } from '@/core/logic/Result';
 import { QueryParams } from '@/interfaces/request.interface';
 
 import { UserDTO } from '../../dto/UserDTO';
-import { UserMap } from '../../mappers/UserMap';
+import UserMap from '../../mappers/UserMap';
 import { UserRepository } from '../../repositories/UserRepository';
 
-type Response = Either<GenericAppError.UnexpectedError, Result<UserDTO[]>>;
-export class GetUsersUsecase implements Usecase<QueryParams, Response> {
+type GetUsersUsecaseResponse = Either<GenericAppError.UnexpectedError, Result<UserDTO[]>>;
+export class GetUsersUsecase implements Usecase<QueryParams, GetUsersUsecaseResponse> {
   constructor(private readonly repository: UserRepository) {}
 
-  async execute(): Promise<Response> {
+  async execute(): Promise<GetUsersUsecaseResponse> {
     try {
       const results = await this.repository.findAllUser();
-      const data = Result.ok<UserDTO[]>(results.map(user => UserMap.toDTO(user)));
 
-      return right(data);
+      return right(Result.ok<UserDTO[]>(results.map(user => UserMap.toDTO(user))));
     } catch (error) {
       return left(new GenericAppError.UnexpectedError(error));
     }

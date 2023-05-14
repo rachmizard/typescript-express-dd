@@ -1,11 +1,12 @@
+import { dbConnection } from '@/database';
 import { UserEntity } from '../../infra/typeorm/UserEntity';
-import { UserRepositoryImpl } from '../../repositories/UserRepository';
+import { UserRepositoryImpl } from '../../repositories/UserRepositoryImpl';
 import { DeleteUserByIdController } from './DeleteUserByIdController';
 import { DeleteUserByIdUsecase } from './DeleteUserByIdUsecase';
 
-const userRepo = new UserRepositoryImpl(UserEntity);
+const userRepoImpl = new UserRepositoryImpl(dbConnection.getRepository(UserEntity));
 
-const deleteUserByIdUsecase = new DeleteUserByIdUsecase(userRepo);
+const deleteUserByIdUsecase = new DeleteUserByIdUsecase(userRepoImpl);
 const deleteUserByIdController = new DeleteUserByIdController(deleteUserByIdUsecase);
 
 export { deleteUserByIdUsecase, deleteUserByIdController };

@@ -1,12 +1,14 @@
 import { Mapper } from '@/core/infra/Mapper';
+import { UniqueEntityID } from '@/core/domain/UniqueEntityId';
+
 import { User } from '../domain/User';
 import { UserDTO } from '../dto/UserDTO';
 import { UserEmail } from '../domain/UserEmail';
 import { UserPassword } from '../domain/UserPassword';
-import { UniqueEntityID } from '@/core/domain/UniqueEntityId';
+import { UserEntity } from '../infra/typeorm/UserEntity';
 
-export class UserMap implements Mapper<User> {
-  public static toDomain(raw: any): User {
+export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
+  public static toDomain(raw: UserEntity): User {
     if (raw === null) return null;
 
     const userEmailOrError = UserEmail.create(raw.email);
@@ -16,6 +18,8 @@ export class UserMap implements Mapper<User> {
       {
         email: userEmailOrError.getValue(),
         password: userPasswordOrError.getValue(),
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     );
@@ -23,16 +27,19 @@ export class UserMap implements Mapper<User> {
     return userOrError.isSuccess ? userOrError.getValue() : null;
   }
 
-  public static toPersistence(t: User) {
-    return {
-      email: t.email.value,
-      password: t.password.value,
-    };
-  }
-
   public static toDTO(t: User): UserDTO {
     return {
       email: t.email.value,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    };
+  }
+
+  public static toPersistence(t: User): Partial<UserEntity> {
+    return {
+      email: t.email.value,
+      password: t.password.value,
+      ...t,
     };
   }
 }

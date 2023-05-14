@@ -5,19 +5,19 @@ import { Result, left, right } from '@/core/logic/Result';
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserPassword } from '../../domain/UserPassword';
-import { CreateUserDto } from '../../dto/UserDTO';
 import { UserRepository } from '../../repositories/UserRepository';
 import { CreateUserErrors } from './CreateUserErrors';
 import { CreateUserResponse } from './CreateUserResponse';
+import { CreateUserDto } from './CreateUserDTO';
 
 export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserResponse> {
   constructor(private readonly repository: UserRepository) {}
 
   async execute(payload: CreateUserDto): Promise<CreateUserResponse> {
     try {
-      const isExists = await this.repository.findUserByEmail(payload.email);
+      const emailExists = await this.repository.findUserByEmail(payload.email);
 
-      if (isExists) {
+      if (emailExists) {
         return left(new CreateUserErrors.EmailAlreadyExistsError(payload.email));
       }
 

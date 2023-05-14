@@ -1,8 +1,8 @@
+import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USER } from '@config';
 import { join } from 'path';
-import { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } from '@config';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { DataSource } from 'typeorm';
 
-export const dbConnection: PostgresConnectionOptions = {
+export const dbConnection = new DataSource({
   type: 'postgres',
   username: DB_USER,
   password: DB_PASSWORD,
@@ -14,4 +14,4 @@ export const dbConnection: PostgresConnectionOptions = {
   entities: [join(__dirname, '../**/*entity{.ts,.js}', '../**/*Entity{.ts,.js}')],
   migrations: [join(__dirname, '../**/*.migration{.ts,.js}')],
   subscribers: [join(__dirname, '../**/*.subscriber{.ts,.js}')],
-};
+});
