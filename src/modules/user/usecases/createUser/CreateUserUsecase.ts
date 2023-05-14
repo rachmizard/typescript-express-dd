@@ -5,10 +5,12 @@ import { Result, left, right } from '@/core/logic/Result';
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserPassword } from '../../domain/UserPassword';
+import { UserDTO } from '../../dto/UserDTO';
+import UserMap from '../../mappers/UserMap';
 import { UserRepository } from '../../repositories/UserRepository';
+import { CreateUserDto } from './CreateUserDTO';
 import { CreateUserErrors } from './CreateUserErrors';
 import { CreateUserResponse } from './CreateUserResponse';
-import { CreateUserDto } from './CreateUserDTO';
 
 export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserResponse> {
   constructor(private readonly repository: UserRepository) {}
@@ -42,9 +44,10 @@ export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserRespo
       }
 
       const user = userOrError.getValue();
-      await this.repository.createUser(user);
+      const result = await this.repository.createUser(user);
 
-      return right(Result.ok<void>());
+      const userDTO = UserMap.toDTO(result);
+      return right(Result.ok<UserDTO>(userDTO));
     } catch (error) {
       return left(new GenericAppError.UnexpectedError(error));
     }

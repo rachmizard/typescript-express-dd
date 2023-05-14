@@ -15,7 +15,7 @@ export abstract class BaseController {
   }
 
   public static jsonResponse(res: express.Response, code: number, message: string) {
-    return res.status(code).json({ message });
+    return res.status(code).json({ message, code });
   }
 
   public ok<T>(res: express.Response, dto?: T) {
@@ -26,8 +26,12 @@ export abstract class BaseController {
     }
   }
 
-  public created(res: express.Response) {
-    return res.sendStatus(201);
+  public created(res: express.Response, message = 'Created', dto?: any) {
+    return res.status(201).json({
+      message,
+      code: 201,
+      data: dto,
+    });
   }
 
   public clientError(message?: string) {
@@ -62,10 +66,11 @@ export abstract class BaseController {
     return BaseController.jsonResponse(this.res, 400, 'TODO');
   }
 
-  public fail(error: Error | string) {
+  public fail(error: Error | string, code = 500) {
     console.log(error);
     return this.res.status(500).json({
       message: error.toString(),
+      code,
     });
   }
 }

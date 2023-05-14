@@ -1,6 +1,6 @@
 import { BaseController } from '@/core/infra/BaseController';
-import { CreateUserUsecase } from './CreateUserUsecase';
 import { CreateUserDto } from './CreateUserDTO';
+import { CreateUserUsecase } from './CreateUserUsecase';
 
 export class CreateUserController extends BaseController {
   constructor(private readonly usecase: CreateUserUsecase) {
@@ -11,9 +11,18 @@ export class CreateUserController extends BaseController {
     try {
       const req = this.req;
       const body: CreateUserDto = req.body;
-      const createUserData = await this.usecase.execute(body);
+      const response = await this.usecase.execute(body);
 
-      return this.ok(this.res, createUserData);
+      if (response.isLeft()) {
+        const error = response.value;
+
+        switch (error.constructor) {
+          default:
+            return this.fail(error.errorValue().message, error.errorValue().code);
+        }
+      }
+
+      return this.created(this.res, 'User created successfully', response.value.getValue());
     } catch (error) {
       return this.fail(error);
     }

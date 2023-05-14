@@ -3,7 +3,7 @@
 
 ###
 # Find All Users
-GET {{ baseURL }}/users
+GET {{ baseURL }}/users?limit=10&page=1
 
 ###
 # Find User By Id
@@ -15,7 +15,7 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "razim@email.com",
+    "email": "anjay@email.com",
 	"password": "password"
 }
 
@@ -31,4 +31,4 @@ Content-Type: application/json
 
 ###
 # Delete User By Id
-DELETE {{ baseURL }}/users/1
+DELETE {{ baseURL }}/users/84c74248-1b02-429b-8282-92f4a7d07c3a

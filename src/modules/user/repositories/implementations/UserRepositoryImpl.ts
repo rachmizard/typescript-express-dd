@@ -10,6 +10,18 @@ import { UserRepository } from '../UserRepository';
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly entityRepo: Repository<UserEntity>) {}
 
+  public async exists(t: User): Promise<boolean> {
+    return this.entityRepo
+      .findOne({
+        where: { id: t.id.toValue().toString() },
+      })
+      .then(result => !!result);
+  }
+  public async save(t: User): Promise<User> {
+    const persistenceValues = await UserMap.toPersistence(t);
+    return this.entityRepo.save(persistenceValues).then(result => UserMap.toDomain(result));
+  }
+
   public async paginationMeta(limit: number, page: number): Promise<PaginationMeta> {
     const total = await this.countUser();
     return UserMap.toPaginatedDTO(total, page, limit);
@@ -54,7 +66,7 @@ export class UserRepositoryImpl implements UserRepository {
     return await this.findUserById(id);
   }
 
-  public async deleteUser(id: string): Promise<User> {
-    return await this.entityRepo.delete(id).then(() => this.findUserById(id));
+  public async deleteUser(id: string): Promise<void> {
+    await this.entityRepo.delete(id);
   }
 }

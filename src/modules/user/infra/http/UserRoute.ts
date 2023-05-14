@@ -19,6 +19,6 @@ export class UserRoute implements BaseRoute {
     // this.router.get(`${this.path}/:id(\\d+)`, this.controller.getUserById);
     this.router.post(`${this.path}`, (req, res) => createUserController.execute(req, res));
     // this.router.put(`${this.path}/:id(\\d+)`, ValidationMiddleware(UpdateUserDto, true), this.controller.updateUser);
-    this.router.delete(`${this.path}/:id(\\d+)`, (req, res) => deleteUserByIdController.execute(req, res));
+    this.router.delete(`${this.path}/:id`, (req, res) => deleteUserByIdController.execute(req, res));
   }
 }

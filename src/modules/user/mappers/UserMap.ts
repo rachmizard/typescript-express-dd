@@ -49,6 +49,7 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
 
   public static toDTO(t: User): UserDTO {
     return {
+      id: t.id.toValue().toString(),
       email: t.email.value,
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,

@@ -6,6 +6,7 @@ export namespace CreateUserErrors {
     constructor(email: string) {
       super(false, {
         message: `The email ${email} associated for this account already exists`,
+        code: 409,
       } as UseCaseError);
     }
   }
@@ -14,6 +15,7 @@ export namespace CreateUserErrors {
     constructor(username: string) {
       super(false, {
         message: `The username ${username} was already taken`,
+        code: 409,
       } as UseCaseError);
     }
   }
