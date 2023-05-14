@@ -38,10 +38,25 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.updatedAt;
   }
 
+  public updateEmail(email: UserEmail): void {
+    if (!this.email.equals(email)) {
+      this.props.email = email;
+    }
+  }
+
+  public updatePassword(password?: UserPassword): void {
+    if (!password) return;
+
+    const comparedSyncPassword = this.password.compareSyncPassword(password.value);
+    if (!comparedSyncPassword) {
+      this.props.password = password;
+    }
+  }
+
   public static create(props: UserProps, id?: UniqueEntityID): Result<User> {
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argument: props.email, argumentName: 'email' },
-      { argument: props?.password, argumentName: 'password' },
+      { argument: props.password, argumentName: 'password' },
     ]);
 
     if (guardResult.isFailure) {

@@ -6,6 +6,7 @@ import { createUserController } from '../../usecases/createUser';
 import { deleteUserByIdController } from '../../usecases/deleteUserById';
 import { getUserByIdController } from '../../usecases/getUserById';
 import { getUsersController } from '../../usecases/getUsers';
+import { updateUserController } from '../../usecases/updateUser';
 
 export class UserRoute implements BaseRoute {
   public path = '/users';
@@ -19,7 +20,7 @@ export class UserRoute implements BaseRoute {
     this.router.get(`${this.path}`, (req, res) => getUsersController.execute(req, res));
     this.router.get(`${this.path}/:id`, (req, res) => getUserByIdController.execute(req, res));
     this.router.post(`${this.path}`, (req, res) => createUserController.execute(req, res));
-    // this.router.put(`${this.path}/:id(\\d+)`, ValidationMiddleware(UpdateUserDto, true), this.controller.updateUser);
+    this.router.put(`${this.path}/:id`, (req, res) => updateUserController.execute(req, res));
     this.router.delete(`${this.path}/:id`, (req, res) => deleteUserByIdController.execute(req, res));
   }
 }

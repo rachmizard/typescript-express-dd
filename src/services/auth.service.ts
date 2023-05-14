@@ -8,18 +8,26 @@ import { HttpException } from '@/exceptions/httpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 
+/**
+ *
+ * @param user @deprecated
+ * @returns
+ */
 const createToken = (user: User): TokenData => {
   const dataStoredInToken: DataStoredInToken = { id: user.id };
   const secretKey: string = SECRET_KEY;
   const expiresIn: number = 60 * 60;
 
   return { expiresIn, token: sign(dataStoredInToken, secretKey, { expiresIn }) };
-}
+};
 
 const createCookie = (tokenData: TokenData): string => {
   return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
-}
+};
 
+/**
+ * @deprecated
+ */
 @Service()
 @EntityRepository()
 export class AuthService extends Repository<UserEntity> {
@@ -37,7 +45,7 @@ export class AuthService extends Repository<UserEntity> {
     if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
-    if (!isPasswordMatching) throw new HttpException(409, "Password not matching");
+    if (!isPasswordMatching) throw new HttpException(409, 'Password not matching');
 
     const tokenData = createToken(findUser);
     const cookie = createCookie(tokenData);

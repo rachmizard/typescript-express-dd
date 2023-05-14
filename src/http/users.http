@@ -15,18 +15,18 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "anjay@email.com",
+    "email": "chris@email.com",
 	"password": "password"
 }
 
 ###
 # Modify User By Id
-PUT {{ baseURL }}/users/1
+PUT {{ baseURL }}/users/0057db78-4788-4a1c-929b-460e69c69cd8
 Content-Type: application/json
 
 {
-    "email": "example@email.com",
-	"password": "password"
+    "email": "chris@email.com",
+    "password": "password"
 }
 
 ###

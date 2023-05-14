@@ -26,7 +26,7 @@ export abstract class BaseController {
     }
   }
 
-  public created(res: express.Response, message = 'Created', dto?: any) {
+  public created<T>(res: express.Response, message = 'Created', dto?: T) {
     return res.status(201).json({
       message,
       code: 201,
@@ -68,7 +68,7 @@ export abstract class BaseController {
 
   public fail(error: Error | string, code = 500) {
     console.log(error);
-    return this.res.status(500).json({
+    return this.res.status(code).json({
       message: error.toString(),
       code,
     });

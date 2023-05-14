@@ -24,27 +24,20 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
   }
 
   /**
-   * @method comparePassword
+   * @method compareSyncPassword
    * @desc Compares as plain-text and hashed password.
    */
 
-  public async comparePassword(plainTextPassword: string): Promise<boolean> {
-    let hashed: string;
+  public compareSyncPassword(plainTextPassword: string): boolean {
     if (this.isAlreadyHashed()) {
-      hashed = this.props.value;
-      return this.bcryptCompare(plainTextPassword, hashed);
+      return this.bcryptCompare(plainTextPassword, this.props.value);
     } else {
-      return this.props.value === plainTextPassword;
+      return plainTextPassword === this.props.value;
     }
   }
 
-  private bcryptCompare(plainText: string, hashed: string): Promise<boolean> {
-    return new Promise(resolve => {
-      bcrypt.compare(plainText, hashed, (err, compareResult) => {
-        if (err) return resolve(false);
-        return resolve(compareResult);
-      });
-    });
+  private bcryptCompare(plainText: string, hashed: string): boolean {
+    return bcrypt.compareSync(plainText, hashed);
   }
 
   public isAlreadyHashed(): boolean {
@@ -85,7 +78,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
     return Result.ok<UserPassword>(
       new UserPassword({
         value: props.value,
-        hashed: !!props.hashed,
+        hashed: props.hashed,
       }),
     );
   }
