@@ -7,7 +7,7 @@ GET {{ baseURL }}/users?limit=10&page=1
 
 ###
 # Find User By Id
-GET {{ baseURL }}/users/1
+GET {{ baseURL }}/users/99da9828-6165-4e4d-a03c-a572081c20c
 
 ###
 # Create User
