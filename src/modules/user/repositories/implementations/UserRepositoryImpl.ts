@@ -1,12 +1,19 @@
-import { ParsedQueryParams } from '@/interfaces/request.interface';
 import { Repository } from 'typeorm';
-import { User } from '../domain/User';
-import { UserEntity } from '../infra/typeorm/UserEntity';
-import UserMap from '../mappers/UserMap';
-import { UserRepository } from './UserRepository';
+import { PaginationMeta } from '@/core/infra/PaginationMeta';
+import { ParsedQueryParams } from '@/interfaces/request.interface';
+
+import { User } from '../../domain/User';
+import { UserEntity } from '../../infra/typeorm/UserEntity';
+import UserMap from '../../mappers/UserMap';
+import { UserRepository } from '../UserRepository';
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly entityRepo: Repository<UserEntity>) {}
+
+  public async paginationMeta(limit: number, page: number): Promise<PaginationMeta> {
+    const total = await this.countUser();
+    return UserMap.toPaginatedDTO(total, page, limit);
+  }
 
   public countUser(): Promise<number> {
     return this.entityRepo.count();

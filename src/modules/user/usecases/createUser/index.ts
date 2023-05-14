@@ -2,7 +2,7 @@ import { dbConnection } from '@/database';
 import { UserEntity } from '../../infra/typeorm/UserEntity';
 import { CreateUserController } from './CreateUserController';
 import { CreateUserUsecase } from './CreateUserUsecase';
-import { UserRepositoryImpl } from '../../repositories/UserRepositoryImpl';
+import { UserRepositoryImpl } from '../../repositories/implementations/UserRepositoryImpl';
 
 const userRepoImpl = new UserRepositoryImpl(dbConnection.getRepository(UserEntity));
 const createUserUsecase = new CreateUserUsecase(userRepoImpl);

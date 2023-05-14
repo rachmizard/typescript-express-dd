@@ -1,6 +1,7 @@
 import { BaseController } from '@/core/infra/BaseController';
 import { GetUsersUsecase } from './GetUsersUsecase';
 import { GetUsersResponseDTO } from './GetUsersResponseDTO';
+import { QueryParams } from '@/interfaces/request.interface';
 
 export class GetUsersController extends BaseController {
   constructor(private readonly usecase: GetUsersUsecase) {
@@ -9,7 +10,8 @@ export class GetUsersController extends BaseController {
 
   protected async executeImpl() {
     try {
-      const result = await this.usecase.execute();
+      const queryParams = this.req.query as unknown as QueryParams;
+      const result = await this.usecase.execute(queryParams);
 
       if (result.isLeft()) {
         const error = result.value;
@@ -20,9 +22,7 @@ export class GetUsersController extends BaseController {
         }
       }
 
-      return this.ok<GetUsersResponseDTO>(this.res, {
-        data: result.value.getValue(),
-      });
+      return this.ok<GetUsersResponseDTO>(this.res, result.value.getValue());
     } catch (error) {
       return this.fail(error.toString());
     }

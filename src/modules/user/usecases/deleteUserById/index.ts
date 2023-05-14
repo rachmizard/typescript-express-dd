@@ -1,6 +1,6 @@
 import { dbConnection } from '@/database';
 import { UserEntity } from '../../infra/typeorm/UserEntity';
-import { UserRepositoryImpl } from '../../repositories/UserRepositoryImpl';
+import { UserRepositoryImpl } from '../../repositories/implementations/UserRepositoryImpl';
 import { DeleteUserByIdController } from './DeleteUserByIdController';
 import { DeleteUserByIdUsecase } from './DeleteUserByIdUsecase';
 
