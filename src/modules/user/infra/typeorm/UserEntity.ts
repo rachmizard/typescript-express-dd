@@ -1,10 +1,13 @@
 import { IsNotEmpty } from 'class-validator';
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({
+    generated: 'uuid',
+    primary: true,
+  })
+  id: string;
 
   @Column()
   @IsNotEmpty()

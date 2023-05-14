@@ -72,22 +72,21 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
 
   public static create(props: UserPasswordProps): Result<UserPassword> {
     const propsResult = Guard.againstNullOrUndefined(props.value, 'password');
-
     if (propsResult.isFailure) {
       return Result.fail<UserPassword>(propsResult.errorValue());
-    } else {
-      if (!props.hashed) {
-        if (!this.isAppropriateLength(props.value)) {
-          return Result.fail<UserPassword>('Password doesnt meet criteria [8 chars min].');
-        }
-      }
-
-      return Result.ok<UserPassword>(
-        new UserPassword({
-          value: props.value,
-          hashed: !!props.hashed === true,
-        }),
-      );
     }
+
+    if (!props.hashed) {
+      if (!this.isAppropriateLength(props.value)) {
+        return Result.fail<UserPassword>('Password doesnt meet criteria [8 chars min].');
+      }
+    }
+
+    return Result.ok<UserPassword>(
+      new UserPassword({
+        value: props.value,
+        hashed: !!props.hashed,
+      }),
+    );
   }
 }

@@ -26,7 +26,7 @@ export class UserRepositoryImpl implements UserRepository {
     return results.map(result => UserMap.toDomain(result));
   }
 
-  public async findUserById(id: number): Promise<User> {
+  public async findUserById(id: string): Promise<User> {
     const result = await this.entityRepo.findOne({
       where: { id },
     });
@@ -35,16 +35,19 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   public async createUser(data: User): Promise<User> {
-    const result = await this.entityRepo.create(UserMap.toPersistence(data)).save();
+    const persistenceValues = await UserMap.toPersistence(data);
+    const result = await this.entityRepo.create(persistenceValues).save();
 
     return UserMap.toDomain(result);
   }
 
-  public async updateUser(id: number, data: User): Promise<User> {
-    return await this.entityRepo.update(id, UserMap.toPersistence(data)).then(() => this.findUserById(id));
+  public async updateUser(id: string, data: User): Promise<User> {
+    const persistenceValues = await UserMap.toPersistence(data);
+    await this.entityRepo.update(id, persistenceValues);
+    return await this.findUserById(id);
   }
 
-  public async deleteUser(id: number): Promise<User> {
+  public async deleteUser(id: string): Promise<User> {
     return await this.entityRepo.delete(id).then(() => this.findUserById(id));
   }
 }

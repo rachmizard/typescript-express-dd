@@ -9,7 +9,7 @@ export const dbConnection = new DataSource({
   host: DB_HOST,
   port: Number(DB_PORT),
   database: DB_DATABASE,
-  synchronize: false,
+  synchronize: true,
   logging: false,
   entities: [join(__dirname, '../**/*entity{.ts,.js}', '../**/*Entity{.ts,.js}')],
   migrations: [join(__dirname, '../**/*.migration{.ts,.js}')],

@@ -35,11 +35,11 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
     };
   }
 
-  public static toPersistence(t: User): Partial<UserEntity> {
+  public static async toPersistence(t: User): Promise<Partial<UserEntity>> {
     return {
+      id: t.id.toValue().toString(),
       email: t.email.value,
-      password: t.password.value,
-      ...t,
+      password: await t.password.getHashedValue(),
     };
   }
 }
