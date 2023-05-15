@@ -7,6 +7,7 @@ import { UserEmail } from '../domain/UserEmail';
 import { UserPassword } from '../domain/UserPassword';
 import { UserEntity } from '../infra/typeorm/UserEntity';
 import { PaginationMeta } from '@/core/infra/PaginationMeta';
+import { UserUsername } from '../domain/UserUsername';
 
 export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
   public static toPaginatedDTO(total: number, page: number, limit: number): PaginationMeta {
@@ -33,11 +34,13 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
 
     const userEmailOrError = UserEmail.create(raw.email);
     const userPasswordOrError = UserPassword.create({ value: raw.password });
+    const userUsernameOrError = UserUsername.create(raw.username);
 
     const userOrError = User.create(
       {
         email: userEmailOrError.getValue(),
         password: userPasswordOrError.getValue(),
+        username: userUsernameOrError.getValue(),
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
@@ -51,6 +54,7 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
     return {
       id: t.id.toValue().toString(),
       email: t.email.value,
+      username: t.username.value,
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,
     };
@@ -60,6 +64,7 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
     return {
       id: t.id.toValue().toString(),
       email: t.email.value,
+      username: t.username.value,
       password: await t.password.getHashedValue(),
     };
   }

@@ -5,10 +5,12 @@ import { Result } from '@/core/logic/Result';
 import { UserId } from './UserId';
 import { UserEmail } from './UserEmail';
 import { UserPassword } from './UserPassword';
+import { UserUsername } from './UserUsername';
 
 interface UserProps {
   email: UserEmail;
   password?: UserPassword;
+  username?: UserUsername;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +30,10 @@ export class User extends AggregateRoot<UserProps> {
 
   get password() {
     return this.props.password;
+  }
+
+  get username() {
+    return this.props.username;
   }
 
   get createdAt() {
@@ -57,6 +63,7 @@ export class User extends AggregateRoot<UserProps> {
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argument: props.email, argumentName: 'email' },
       { argument: props.password, argumentName: 'password' },
+      { argument: props.username, argumentName: 'username' },
     ]);
 
     if (guardResult.isFailure) {
