@@ -12,6 +12,6 @@ export const dbConnection = new DataSource({
   synchronize: true,
   logging: false,
   entities: [join(__dirname, '../**/*entity{.ts,.js}', '../**/*Entity{.ts,.js}')],
-  migrations: [join(__dirname, '../**/*.migration{.ts,.js}')],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
   subscribers: [join(__dirname, '../**/*.subscriber{.ts,.js}')],
 });
