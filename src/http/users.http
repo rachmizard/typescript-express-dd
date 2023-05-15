@@ -3,7 +3,7 @@
 
 ###
 # Find All Users
-GET {{ baseURL }}/users?limit=10&page=1&sort=createdAt&order=asc
+GET {{ baseURL }}/users?limit=10&page=1&sort=createdAt&order=desc
 
 ###
 # Find User By Id
@@ -15,7 +15,8 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "chrisjohn@email.com",
+    "email": "kerenkali@email.com",
+    "username": "chrisjohn",
 	"password": "password"
 }
 

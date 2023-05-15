@@ -10,6 +10,13 @@ import { UserRepository } from '../UserRepository';
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly entityRepo: Repository<UserEntity>) {}
 
+  public async findUserByUsername(username: string): Promise<User> {
+    const result = await this.entityRepo.findOne({
+      where: { username },
+    });
+    return UserMap.toDomain(result);
+  }
+
   public async exists(t: User): Promise<boolean> {
     return this.entityRepo
       .findOne({

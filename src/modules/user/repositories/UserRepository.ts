@@ -10,6 +10,7 @@ export abstract class UserRepository implements Repo<User> {
   public abstract findAllUser(params?: Partial<ParsedQueryParams>): Promise<User[]>;
   public abstract findUserById(id: string): Promise<User>;
   public abstract findUserByEmail(email: string): Promise<User>;
+  public abstract findUserByUsername(username: string): Promise<User>;
   public abstract createUser(data: User): Promise<User>;
   public abstract updateUser(id: string, data: User): Promise<User>;
   public abstract deleteUser(id: string): Promise<void>;

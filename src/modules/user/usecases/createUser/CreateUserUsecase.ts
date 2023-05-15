@@ -11,6 +11,7 @@ import { UserRepository } from '../../repositories/UserRepository';
 import { CreateUserDto } from './CreateUserDTO';
 import { CreateUserErrors } from './CreateUserErrors';
 import { CreateUserResponse } from './CreateUserResponse';
+import { UserUsername } from '../../domain/UserUsername';
 
 export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserResponse> {
   constructor(private readonly repository: UserRepository) {}
@@ -18,6 +19,11 @@ export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserRespo
   async execute(payload: CreateUserDto): Promise<CreateUserResponse> {
     try {
       const emailExists = await this.repository.findUserByEmail(payload.email);
+      const usernameExists = await this.repository.findUserByUsername(payload.username);
+
+      if (usernameExists) {
+        return left(new CreateUserErrors.UsernameTakenError(payload.username));
+      }
 
       if (emailExists) {
         return left(new CreateUserErrors.EmailAlreadyExistsError(payload.email));
@@ -27,16 +33,17 @@ export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserRespo
       const passwordOrError = UserPassword.create({
         value: payload.password,
       });
+      const usernameOrError = UserUsername.create(payload.username);
 
-      const dtoResult = Result.combine([emailOrError, passwordOrError]);
-
-      if (dtoResult.isFailure) {
-        return left(Result.fail<void>(dtoResult.errorValue())) as CreateUserResponse;
+      const validate = Result.combine([emailOrError, passwordOrError, usernameOrError]);
+      if (validate.isFailure) {
+        return left(Result.fail<void>(validate.errorValue())) as CreateUserResponse;
       }
 
       const userOrError = User.create({
         email: emailOrError.getValue(),
         password: passwordOrError.getValue(),
+        username: usernameOrError.getValue(),
       });
 
       if (userOrError.isFailure) {
@@ -44,7 +51,7 @@ export class CreateUserUsecase implements Usecase<CreateUserDto, CreateUserRespo
       }
 
       const user = userOrError.getValue();
-      const result = await this.repository.createUser(user);
+      const result = await this.repository.save(user);
 
       const userDTO = UserMap.toDTO(result);
       return right(Result.ok<UserDTO>(userDTO));
