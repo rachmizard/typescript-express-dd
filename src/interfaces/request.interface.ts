@@ -3,7 +3,8 @@ import { FindOperatorType } from 'typeorm';
 export interface QueryParams {
   limit: number;
   page: number;
-  sort: Record<any, 'ASC' | 'DESC'>;
+  sort: string;
+  order: 'ASC' | 'DESC';
   filter: string;
   [key: string]: any;
 }

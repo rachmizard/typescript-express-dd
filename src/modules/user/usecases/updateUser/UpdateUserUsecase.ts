@@ -33,7 +33,7 @@ export class UpdateUserUsecase implements Usecase<any, UpdateUserUsecaseResponse
 
       const dtoResult = Result.combine([emailOrError, passwordOrError]);
       if (dtoResult.isFailure) {
-        return left(new GenericAppError.InvalidRequestError(dtoResult.error, dtoResult.errorValue()));
+        return left(new GenericAppError.InvalidRequestError(dtoResult.errorValue()));
       }
 
       const user = await this.repository.findUserById(id);

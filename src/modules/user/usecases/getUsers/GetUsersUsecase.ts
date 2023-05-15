@@ -1,29 +1,28 @@
 import { Usecase } from '@/core/domain/Usecase';
 import { GenericAppError } from '@/core/logic/AppError';
+import { QueryMapper } from '@/core/logic/QueryMapper';
 import { Either, Result, left, right } from '@/core/logic/Result';
-import { QueryParams } from '@/interfaces/request.interface';
+import { ParsedQueryParams, QueryParams } from '@/interfaces/request.interface';
 
 import UserMap from '../../mappers/UserMap';
 import { UserRepository } from '../../repositories/UserRepository';
 import { GetUsersResponseDTO } from './GetUsersResponseDTO';
 
-type GetUsersUsecaseResponse = Either<GenericAppError.UnexpectedError, Result<GetUsersResponseDTO>>;
+type GetUsersUsecaseResponse = Either<GenericAppError.UnexpectedError | GenericAppError.InvalidRequestError, Result<GetUsersResponseDTO>>;
 export class GetUsersUsecase implements Usecase<QueryParams, GetUsersUsecaseResponse> {
   constructor(private readonly repository: UserRepository) {}
 
   async execute(params: QueryParams): Promise<GetUsersUsecaseResponse> {
     try {
-      const { limit = 10, page = 1 } = params || {};
+      const parsedQuery = QueryMapper.parseQueryParams(params);
 
-      const skip = Number(limit) * (Number(page) - 1);
-      const take = Number(limit);
+      if (parsedQuery.isFailure) {
+        return left(new GenericAppError.InvalidRequestError(parsedQuery.errorValue()));
+      }
 
-      const results = await this.repository.findAllUser({
-        skip,
-        take,
-      });
-
-      const paginationMeta = await this.repository.paginationMeta(take, page);
+      const parsedQueryResult = parsedQuery.getValue() as ParsedQueryParams;
+      const results = await this.repository.findAllUser(parsedQueryResult);
+      const paginationMeta = await this.repository.paginationMeta(parsedQueryResult.take, params.page);
 
       const responseDTO: GetUsersResponseDTO = {
         data: results.map(user => UserMap.toDTO(user)),

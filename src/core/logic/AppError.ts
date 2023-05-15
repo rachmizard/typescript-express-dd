@@ -18,15 +18,13 @@ export namespace GenericAppError {
     }
   }
 
-  export class InvalidRequestError extends Result<UseCaseError> {
-    public constructor(err: any, message = 'Invalid request.') {
+  export class InvalidRequestError<T = any> extends Result<UseCaseError> {
+    public constructor(message: T) {
       super(false, {
-        message: err?.message || message,
-        error: err,
+        message,
         code: 400,
       } as UseCaseError);
       console.log(`[AppError]: Invalid request.`);
-      console.error(err);
     }
   }
 }

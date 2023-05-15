@@ -3,11 +3,11 @@
 
 ###
 # Find All Users
-GET {{ baseURL }}/users?limit=10&page=1
+GET {{ baseURL }}/users?limit=10&page=1&sort=createdAt&order=asc
 
 ###
 # Find User By Id
-GET {{ baseURL }}/users/99da9828-6165-4e4d-a03c-a572081c20c
+GET {{ baseURL }}/users/99da9828-6165-4e4d-a03c-a572081c20c0
 
 ###
 # Create User
@@ -15,7 +15,7 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "chris@email.com",
+    "email": "chrisjohn@email.com",
 	"password": "password"
 }
 

@@ -32,6 +32,18 @@ export class Guard {
     return text.length <= numChars ? Result.ok<GuardResponse>() : Result.fail<GuardResponse>(`Text is greater than ${numChars} chars.`);
   }
 
+  public static againstMinNumber(minValue: number, actualValue: number, message?: string): Result<GuardResponse> {
+    return actualValue >= minValue
+      ? Result.ok<GuardResponse>()
+      : Result.fail<GuardResponse>(message || `Number given {${actualValue}} is not greater or equal to {${minValue}}`);
+  }
+
+  public static againstMaxNumber(maxValue: number, actualValue: number, message?: string): Result<GuardResponse> {
+    return actualValue <= maxValue
+      ? Result.ok<GuardResponse>()
+      : Result.fail<GuardResponse>(message || `Number given {${actualValue}} is not less or equal to {${maxValue}}`);
+  }
+
   public static againstNullOrUndefined(argument: any, argumentName: string): Result<GuardResponse> {
     if (argument === null || argument === undefined) {
       return Result.fail<GuardResponse>(`${argumentName} is null or undefined`);

@@ -16,9 +16,14 @@ export class GetUsersController extends BaseController {
       if (result.isLeft()) {
         const error = result.value;
 
+        console.log({
+          error: error.error,
+          errorValue: error.errorValue(),
+        });
+
         switch (error.constructor) {
           default:
-            return this.fail(error.errorValue().message);
+            return this.fail(error.errorValue().message, error.errorValue().code);
         }
       }
 
