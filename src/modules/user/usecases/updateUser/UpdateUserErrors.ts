@@ -10,6 +10,14 @@ export namespace UpdateUserErrors {
       });
     }
   }
+  export class UsernameTakenError extends Result<UseCaseError> {
+    constructor() {
+      super(false, {
+        message: `Username already taken`,
+        code: 409,
+      });
+    }
+  }
 
   export class IdNotProvidedError extends Result<UseCaseError> {
     constructor() {

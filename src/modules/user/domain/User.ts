@@ -44,7 +44,13 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.updatedAt;
   }
 
-  public updateEmail(email: UserEmail): void {
+  public updateUsernameIfNotEquals(username: UserUsername): void {
+    if (!this.username.equals(username)) {
+      this.props.username = username;
+    }
+  }
+
+  public updateEmailIfNotEquals(email: UserEmail): void {
     if (!this.email.equals(email)) {
       this.props.email = email;
     }
@@ -60,12 +66,16 @@ export class User extends AggregateRoot<UserProps> {
   }
 
   public static create(props: UserProps, id?: UniqueEntityID): Result<User> {
-    const guardResult = Guard.againstNullOrUndefinedBulk([
+    const bulkProps = [
       { argument: props.email, argumentName: 'email' },
-      { argument: props.password, argumentName: 'password' },
       { argument: props.username, argumentName: 'username' },
-    ]);
+    ];
 
+    if (props.password) {
+      bulkProps.push({ argument: props.password, argumentName: 'password' });
+    }
+
+    const guardResult = Guard.againstNullOrUndefinedBulk(bulkProps);
     if (guardResult.isFailure) {
       return Result.fail<User>(guardResult.errorValue());
     }

@@ -33,14 +33,14 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
     if (raw === null) return null;
 
     const userEmailOrError = UserEmail.create(raw.email);
-    const userPasswordOrError = UserPassword.create({ value: raw.password });
+    const userPasswordOrError = UserPassword.create({ value: raw.password, hashed: true });
     const userUsernameOrError = UserUsername.create(raw.username);
 
     const userOrError = User.create(
       {
         email: userEmailOrError.getValue(),
-        password: userPasswordOrError.getValue(),
         username: userUsernameOrError.getValue(),
+        password: userPasswordOrError.getValue(),
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
@@ -61,11 +61,16 @@ export default class UserMap extends Mapper<User, UserDTO, UserEntity> {
   }
 
   public static async toPersistence(t: User): Promise<Partial<UserEntity>> {
-    return {
+    const persistenceValues = {
       id: t.id.toValue().toString(),
       email: t.email.value,
       username: t.username.value,
-      password: await t.password.getHashedValue(),
     };
+
+    if (t.password) {
+      persistenceValues['password'] = await t.password.getHashedValue();
+    }
+
+    return persistenceValues;
   }
 }

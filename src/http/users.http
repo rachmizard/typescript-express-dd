@@ -7,7 +7,7 @@ GET {{ baseURL }}/users?limit=10&page=1&sort=createdAt&order=desc
 
 ###
 # Find User By Id
-GET {{ baseURL }}/users/99da9828-6165-4e4d-a03c-a572081c20c0
+GET {{ baseURL }}/users/d0297914-3b16-4ccf-a0e7-c71aaf4d0046
 
 ###
 # Create User
@@ -15,19 +15,19 @@ POST {{ baseURL }}/users
 Content-Type: application/json
 
 {
-    "email": "kerenkali@email.com",
-    "username": "chrisjohn",
+    "email": "mizard@email.com",
+    "username": "razim",
 	"password": "password"
 }
 
 ###
 # Modify User By Id
-PUT {{ baseURL }}/users/0057db78-4788-4a1c-929b-460e69c69cd8
+PUT {{ baseURL }}/users/d0297914-3b16-4ccf-a0e7-c71aaf4d0046
 Content-Type: application/json
 
 {
-    "email": "chris@email.com",
-    "password": "password"
+    "email": "mizasrd@email.com",
+    "username": "razimm"
 }
 
 ###

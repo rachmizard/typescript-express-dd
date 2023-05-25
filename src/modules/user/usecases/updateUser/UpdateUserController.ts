@@ -4,6 +4,7 @@ import { UserDTO } from '../../dto/UserDTO';
 import { UpdateUserErrors } from './UpdateUserErrors';
 import { UpdateUserRequestDTO } from './UpdateUserRequestDTO';
 import { UpdateUserUsecase } from './UpdateUserUsecase';
+import { GenericAppError } from '@/core/logic/AppError';
 
 export class UpdateUserController extends BaseController {
   constructor(private readonly usecase: UpdateUserUsecase) {
@@ -23,6 +24,10 @@ export class UpdateUserController extends BaseController {
             return this.notFound(error.errorValue().message);
           case UpdateUserErrors.IdNotProvidedError:
             return this.clientError(error.errorValue().message);
+          case UpdateUserErrors.UsernameTakenError:
+            return this.conflict(error.errorValue().message);
+          case GenericAppError.ConflictError:
+            return this.conflict(error.errorValue().message);
           default:
             return this.fail(error.errorValue().message, error.errorValue().code);
         }

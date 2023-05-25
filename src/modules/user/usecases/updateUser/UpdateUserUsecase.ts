@@ -4,7 +4,7 @@ import { Either, Result, left, right } from '@/core/logic/Result';
 
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
-import { UserPassword } from '../../domain/UserPassword';
+import { UserUsername } from '../../domain/UserUsername';
 import { UserDTO } from '../../dto/UserDTO';
 import UserMap from '../../mappers/UserMap';
 import { UserRepository } from '../../repositories/UserRepository';
@@ -12,7 +12,12 @@ import { UpdateUserErrors } from './UpdateUserErrors';
 import { UpdateUserRequestDTO } from './UpdateUserRequestDTO';
 
 type UpdateUserUsecaseResponse = Either<
-  GenericAppError.UnexpectedError | GenericAppError.InvalidRequestError | UpdateUserErrors.UserNotFoundError,
+  | GenericAppError.UnexpectedError
+  | GenericAppError.InvalidRequestError
+  | GenericAppError.ConflictError
+  | UpdateUserErrors.UserNotFoundError
+  | UpdateUserErrors.UsernameTakenError
+  | UpdateUserErrors.IdNotProvidedError,
   Result<UserDTO>
 >;
 
@@ -26,14 +31,11 @@ export class UpdateUserUsecase implements Usecase<any, UpdateUserUsecaseResponse
       }
 
       const emailOrError = UserEmail.create(body.email);
-      const passwordOrError = UserPassword.create({
-        value: body.password,
-        hashed: false,
-      });
+      const usernameOrError = UserUsername.create(body.username);
 
-      const dtoResult = Result.combine([emailOrError, passwordOrError]);
-      if (dtoResult.isFailure) {
-        return left(new GenericAppError.InvalidRequestError(dtoResult.errorValue()));
+      const validate = Result.combine([emailOrError, usernameOrError]);
+      if (validate.isFailure) {
+        return left(new GenericAppError.InvalidRequestError(validate.errorValue()));
       }
 
       const user = await this.repository.findUserById(id);
@@ -41,15 +43,10 @@ export class UpdateUserUsecase implements Usecase<any, UpdateUserUsecaseResponse
         return left(new UpdateUserErrors.UserNotFoundError());
       }
 
-      const userPrevPassword = UserPassword.create({
-        value: user.password.value,
-        hashed: true,
-      });
-
       const userPrevOrError = User.create(
         {
           email: user.email,
-          password: userPrevPassword.getValue(),
+          username: user.username,
         },
         user.id,
       );
@@ -59,8 +56,8 @@ export class UpdateUserUsecase implements Usecase<any, UpdateUserUsecaseResponse
       }
 
       const updatedUserValues = userPrevOrError.getValue();
-      updatedUserValues.updateEmail(emailOrError.getValue());
-      updatedUserValues.updatePassword(passwordOrError.getValue());
+      updatedUserValues.updateEmailIfNotEquals(emailOrError.getValue());
+      updatedUserValues.updateUsernameIfNotEquals(usernameOrError.getValue());
 
       const updatedUser = await this.repository.updateUser(id, updatedUserValues);
 
